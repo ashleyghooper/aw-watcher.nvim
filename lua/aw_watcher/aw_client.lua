@@ -1,7 +1,7 @@
 local utils = require("aw_watcher.utils")
 
-local ERR_NOTIFY_INTERVAL = 60 -- seconds
-local HEARTBEAT_MIN_INTERVAL = 8 -- seconds
+local ERR_NOTIFY_INTERVAL_MS = 60 * 1000 -- milliseconds
+local HEARTBEAT_MIN_INTERVAL_MS = 8 * 1000 -- milliseconds
 
 ---@class Client
 local Client = {}
@@ -74,14 +74,14 @@ function Client.heartbeat(self)
     local now = vim.uv.now()
 
     if not self.connected then
-        if self.last_error_notify and (now - self.last_error_notify > ERR_NOTIFY_INTERVAL) then
+        if self.last_error_notify and (now - self.last_error_notify > ERR_NOTIFY_INTERVAL_MS) then
             utils.notify("Not connected. Use :AWStart to try again.", vim.log.levels.WARN)
             self.last_error_notify = now
         end
         return
     end
 
-    if now - self.last_heartbeat < HEARTBEAT_MIN_INTERVAL then
+    if now - self.last_heartbeat < HEARTBEAT_MIN_INTERVAL_MS then
         return
     end
 
