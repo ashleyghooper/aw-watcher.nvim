@@ -43,7 +43,7 @@ function Client.__post(self, url, data)
 
     local body = vim.fn.json_encode(data)
 
-    local args = { "POST", url, "-H", "Content-Type: application/json", "--data-raw", body }
+    local args = { "-s", "-f", "-X", "POST", url, "-H", "Content-Type: application/json", "--data-raw", body }
 
     local handle
     ---@diagnostic disable-next-line: missing-fields
@@ -74,7 +74,7 @@ function Client.heartbeat(self)
     local now = vim.uv.now()
 
     if not self.connected then
-        if self.last_error_notify and (now - self.last_error_notify > ERR_NOTIFY_INTERVAL_MS) then
+        if not self.last_error_notify or (now - self.last_error_notify > ERR_NOTIFY_INTERVAL_MS) then
             utils.notify("Not connected. Use :AWStart to try again.", vim.log.levels.WARN)
             self.last_error_notify = now
         end
